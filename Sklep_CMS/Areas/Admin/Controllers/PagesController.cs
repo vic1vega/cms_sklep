@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sklep_CMS.Models.ViewModels.Pages;
 using Sklep_CMS.Models.Data;
 using System.Linq;
+using System.Web.ModelBinding;
 
 namespace Sklep_CMS.Areas.Admin.Controllers
 {
@@ -44,7 +45,7 @@ namespace Sklep_CMS.Areas.Admin.Controllers
             {
 
                 string slug;
-                
+
                 //initalization PageDTO
                 PageDTO dto = new PageDTO();
 
@@ -79,6 +80,87 @@ namespace Sklep_CMS.Areas.Admin.Controllers
             TempData["SM"] = "Dodałeś nową stronę";
 
             return RedirectToAction("AddPage");
+        }
+
+        // GET: Admin/Pages/Edit
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            PageVM model;
+
+            using (CmsDataBase db = new CmsDataBase())
+            {
+                //get DTO page with current id
+                PageDTO dto = db.Pages.Find(id);
+
+                //check that page 
+                if (dto == null)
+                {
+                    return Content("Strona nie istnieje");
+                }
+
+                //assign page to view
+                model = new PageVM(dto);
+            }
+
+            return View(model);
+        }
+
+        // POST: Admin/Pages/Edit
+        [HttpPost]
+        public ActionResult Edit(PageVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            using (CmsDataBase db = new CmsDataBase())
+            {
+                //get page id
+                int id = model.Id;
+
+                string slug = "home";
+
+                //get pages to edit
+                PageDTO dto = db.Pages.Find(id);
+
+                //initalization PageDTO
+                dto.Title = model.Title;
+
+                if (model.Slug != "home")
+                {
+                    if (string.IsNullOrWhiteSpace(model.Slug))
+                    {
+                        slug = model.Title.Replace(" ", "-").ToLower();
+                    }
+                    else
+                    {
+                        slug = model.Slug.Replace(" ", "-").ToLower();
+                    }
+                }
+
+                //this same page already exsist
+                //do poprawy - nie rozpoznaje takiego samego adresu strony ("home")
+                if (db.Pages.Where(x => x.Id != id).Any(x => x.Title == model.Title) || db.Pages.Where(x => x.Id != id).Any(x => x.Slug == slug))
+                {
+                    ModelState.AddModelError("", "Strona lub adres strony już istnieje");
+                }
+
+                //assign model to DTO
+                dto.Title = model.Title;
+                dto.Slug = model.Slug;
+                dto.Body = model.Body;
+                dto.HasSidebar = model.HasSidebar;
+
+                //save model to DTO
+                db.SaveChanges();
+            }
+
+            //set up TempData
+            TempData["SM"] = "Zmiany zostały zapisane";
+
+            return RedirectToAction("Edit");
         }
     }
 
