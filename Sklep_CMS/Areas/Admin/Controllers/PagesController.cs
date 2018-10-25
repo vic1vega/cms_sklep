@@ -22,5 +22,11 @@ namespace Sklep_CMS.Areas.Admin.Controllers
             //return page to View
             return View(pagesList);
         }
+
+        // GET: Admin/Pages/AddPage
+        public ActionResult AddPage()
+        {
+            return View();
+        }
     }
 }
