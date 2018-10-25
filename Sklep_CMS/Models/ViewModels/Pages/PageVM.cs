@@ -28,7 +28,7 @@ namespace Sklep_CMS.Models.ViewModels.Pages
         [Required]
         [StringLength(int.MaxValue, MinimumLength = 3)]
         public string Body { get; set; }
-        public string Sorting { get; set; }
+        public int Sorting { get; set; }
         public bool HasSidebar { get; set; }
 
     }
