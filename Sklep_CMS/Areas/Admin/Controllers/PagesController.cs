@@ -106,7 +106,7 @@ namespace Sklep_CMS.Areas.Admin.Controllers
             return View(model);
         }
 
-        // POST: Admin/Pages/Edit
+        // POST: Admin/Pages/Edit/id
         [HttpPost]
         public ActionResult Edit(PageVM model)
         {
@@ -163,7 +163,7 @@ namespace Sklep_CMS.Areas.Admin.Controllers
             return RedirectToAction("Edit");
         }
 
-        // GET: Admin/Pages/Details
+        // GET: Admin/Pages/Details/id
         [HttpGet]
         public ActionResult Details(int id)
         {
@@ -187,7 +187,24 @@ namespace Sklep_CMS.Areas.Admin.Controllers
             return View(model);
         }
 
-        MvcApplication  
+        // GET: Admin/Pages/Delete/id
+        [HttpGet]
+        public ActionResult Delete(int id)
+        {
+            using (CmsDataBase db = new CmsDataBase())
+            {
+                //get page to delete
+                PageDTO dto = db.Pages.Find(id);
+
+                //delete selected page from db
+                db.Pages.Remove(dto);
+
+                db.SaveChanges();
+
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 
 }
