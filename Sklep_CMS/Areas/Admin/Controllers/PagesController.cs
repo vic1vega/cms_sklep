@@ -186,6 +186,8 @@ namespace Sklep_CMS.Areas.Admin.Controllers
 
             return View(model);
         }
+
+        MvcApplication  
     }
 
 }
