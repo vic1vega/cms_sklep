@@ -162,6 +162,30 @@ namespace Sklep_CMS.Areas.Admin.Controllers
 
             return RedirectToAction("Edit");
         }
+
+        // GET: Admin/Pages/Details
+        [HttpGet]
+        public ActionResult Details(int id)
+        {
+            //PageVm declaration
+            PageVM model;
+
+            using (CmsDataBase db = new CmsDataBase())
+            {
+                //get pages with id
+                PageDTO dto = db.Pages.Find(id);
+
+                if (dto == null)
+                {
+                    return Content("Wybrana strona nie istnieje");
+                }
+
+                //PageVM initialization
+                model = new PageVM(dto);
+            }
+
+            return View(model);
+        }
     }
 
 }
