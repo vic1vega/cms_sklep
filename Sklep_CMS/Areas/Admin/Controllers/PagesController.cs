@@ -228,6 +228,47 @@ namespace Sklep_CMS.Areas.Admin.Controllers
 
             return View();
         }
+
+        // GET: Admin/Pages/EditSidebar
+        [HttpGet]
+        public ActionResult EditSidebar()
+        {
+            // ViewModel Declaration
+            SidebarVM model;
+
+            using (CmsDataBase db = new CmsDataBase())
+            {
+                //get SidebarDTO
+                SidebarDTO dto = db.Sidebar.Find(1);
+
+                //init model
+                model = new SidebarVM(dto);
+            }
+
+            return View(model);
+        }
+
+        // POST: Admin/Pages/EditSidebar
+        [HttpPost]
+        public ActionResult EditSidebar(SidebarVM model)
+        {
+            using (CmsDataBase db = new CmsDataBase())
+            {
+                //get dto sidebar
+                SidebarDTO dto = db.Sidebar.Find(1);
+
+                //modify sidebar
+                dto.Body = model.Body;
+
+                //save to DB
+                db.SaveChanges();
+            }
+
+            //set prompt about sidebar modify
+            TempData["SM"] = "Pasek boczny został zmodyfikowany.";
+
+            return RedirectToAction("EditSidebar");
+        }
     }
 
 }
